@@ -75,6 +75,7 @@ func reader(conn *websocket.Conn) {
 		if string(p) == "save" {
 
 			os.WriteFile("demo.jpg", a, os.ModePerm)
+
 		}
 
 		if err != nil {
@@ -82,12 +83,6 @@ func reader(conn *websocket.Conn) {
 			return
 		}
 		log.Println("使用者訊息: " + string(p))
-
-		// if err := conn.WriteMessage(messageType, p); err != nil {
-		// 	log.Println(err)
-		// 	return
-		// }
-
 	}
 }
 
