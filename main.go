@@ -36,7 +36,7 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 }
 
 func reader(conn *websocket.Conn) {
-	var a []byte
+	var newImg []byte
 
 	for {
 		messageType, p, err := conn.ReadMessage()
@@ -48,21 +48,20 @@ func reader(conn *websocket.Conn) {
 			}
 
 			time.Sleep(time.Second)
-
 			img := gocv.NewMat()
+			defer img.Close()
 
 			webcam.Read(&img)
-
 			defer webcam.Close()
 
 			buf, err := gocv.IMEncode(".jpg", img)
 			defer buf.Close()
 
-			a = buf.GetBytes()
+			newImg = buf.GetBytes()
 
 			// d, _ := os.ReadFile(a)
 
-			data := base64.StdEncoding.EncodeToString(a)
+			data := base64.StdEncoding.EncodeToString(newImg)
 
 			// fmt.Println(data)
 
@@ -73,9 +72,7 @@ func reader(conn *websocket.Conn) {
 
 		}
 		if string(p) == "save" {
-
-			os.WriteFile("demo.jpg", a, os.ModePerm)
-
+			os.WriteFile("demo.jpg", newImg, os.ModePerm)
 		}
 
 		if err != nil {
